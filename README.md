@@ -5,11 +5,11 @@ Many medical equipments (Hematology analyser, ABG analyser, Electrolyte analyser
 
 One sample Data is enclosed between \<STX\> and \<ETX\>
   
-This program takes serial port data and create one file for each block between <STX> and <ETX>
+This program takes serial port data and create one file for each block between \<STX\> and \<ETX\>
   
-Some equipments are erratic in no sending ETX. That problem is taken care of by setting alarm for 10 second.
+Some equipments are erratic in no sending \<ETX\>. That problem is taken care of by setting alarm for 10 second.
 
-If <ETX> is not received in 10 sec after <STX>, file is closed
+If \<ETX\> is not received in 10 sec after \<STX\>, file is closed
   
 # Compile as follows
 
@@ -41,6 +41,6 @@ to Test alarm by following command
 
 cat|./a.out
 
-to send 2nd STX, press ctrl+shift+u (underlined u is seen), then write 002
+to send 2nd \<STX\>, press ctrl+shift+u (underlined u is seen), then write 002
 
 
