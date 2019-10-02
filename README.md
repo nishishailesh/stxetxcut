@@ -41,6 +41,6 @@ to Test alarm by following command
 
 cat|./a.out
 
-to send 2nd \<STX\>, press ctrl+shift+u (underlined u is seen), then write 002
+to send \<STX\>, press ctrl+shift+u (underlined u is seen), then write 002
 
 
