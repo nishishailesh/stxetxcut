@@ -3,7 +3,7 @@ Unidirectional serial port communication with medical equipments
 
 Many medical equipments (Hematology analyser, ABG analyser, Electrolyte analyser) work by sending data on serial port  
 
-One sample Data is enclosed between <STX> and <ETX>
+One sample Data is enclosed between \<STX\> and \<ETX\>
   
 This program takes serial port data and create one file for each block between <STX> and <ETX>
   
