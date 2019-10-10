@@ -22,8 +22,6 @@
 int file_counter=1;
 FILE* frm = NULL;
 int file_status=0;
-char fname[200];
-char file_data[10000];
 
 void current_date_time(char* buffer)
 {
@@ -100,21 +98,17 @@ int stop_alarm(void)
 void alarm_to_reset (int sig)
 {
 	printf("Alarm event. signal number is:%d\n",sig);
-	frm=fopen(fname,"w");
-	if(frm != NULL)
-	{ 
-		fwrite(file_data,strlen(file_data),1,frm);
-		fclose(frm);
-	}
-	else
+	if (file_status==1)
 	{
-		printf("File %s can not be created\n",fname);
+		fclose(frm);
+		file_status=0;
 	}
 }
 
 int main( int argc, char *argv[] )
 {
 	int c;
+	char fname[200];
 
 	signal (SIGALRM, alarm_to_reset);
 
@@ -125,49 +119,37 @@ int main( int argc, char *argv[] )
 		if(c==2)
 		{
 			printf("<STX> received\n");
-			//if(file_status==1)
-			//{
-				//fclose(frm);
-				//file_status=0;
-			//}
+			if(file_status==1)
+			{
+				fclose(frm);
+				file_status=0;
+			}
 			stop_alarm();
+
 			bzero(fname,200);
-			bzero(file_data,10000);
 			strcpy(fname,"/root/inbox/");
 			filepath(fname);
-			//frm=fopen(fname,"w");
-			//file_status=1;
+			frm=fopen(fname,"w");
+			file_status=1;
 			//printf("opening %s\n",fname);
 			//fwrite((char*)&c,1,1,frm);
 			//printf("%c\n",c);
+
 			start_alarm();
+
 		}
 		
-		else if(c==3)
+		else if(c==3 && file_status==1)
 		{
 			printf("<ETX> received\n");
 			//fwrite((char*)&c,1,1,frm);
-			frm=fopen(fname,"w");
-			if(frm != NULL)
-			{ 
-				fwrite(file_data,strlen(file_data),1,frm);
-				fclose(frm);
-			}
-			else
-			{
-				printf("File %s can not be created\n",fname);
-			}
+			fclose(frm);
+			file_status=0;
 		}
 		
-		else
+		else if(file_status==1)
 		{
-			//fwrite((char*)&c,1,1,frm);
-			char small[5];
-			small[0]=c;
-			small[1]=0;
-			strcat(file_data,small);
-			
-			printf("received:\n%s\n",file_data);
+			fwrite((char*)&c,1,1,frm);
 		}
 	}	
 }
