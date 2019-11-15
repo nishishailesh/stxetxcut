@@ -1,0 +1,185 @@
+#!/bin/bash
+f=`find /root/inbox/* | head -1`
+n=1
+sql='';
+while read  one two;
+do
+#space in if are very important
+
+	if [ "$one" == `echo -e "\xff"` ] ; then
+		#echo $one\|$two
+		echo "The record type: $two"
+	fi
+	if [ "$one" == "p" ] ; then
+		#echo $one\|$two
+		echo "analyser number: $two"
+	fi
+	if [ "$one" == "q" ] ; then
+		#echo $one\|$two
+		echo "analysis date time:$two"
+	fi
+	if [ "$one" == "s" ] ; then
+		#echo $one\|$two
+		echo "analyzer sequence :$two"
+	fi
+	if [ "$one" == "t" ] ; then
+		#echo $one\|$two
+		echo "sampling mode (M=manual, R=Rack) :$two"
+	fi
+	if [ "$one" == "u" ] ; then
+		#echo $one\|$two
+		echo "(Automatic) sample ID :$two"
+	fi
+
+	# Sample_ID found here
+	if [ "$one" == "v" ] ; then
+		#echo $one\|$two
+		echo "ID entered :$two"
+		sample_id="$two"
+	fi
+
+	if [ "$one" == `echo -e "\x80"` ] ; then
+		#echo $one\|$two
+		echo "Analyser mode (A=CBC D=LMG) :$two"
+	fi
+
+	#Analyte results found here
+	if [ "$one" == "!" ] ; then
+		#echo $one\|$two
+		echo "WBC :$two"
+		sql="$sql;update examination set result='$two' where sample_id='$sample_id' and code='WBC'"
+
+	fi
+
+	if [ "$one" == "2" ] ; then
+		#echo $one\|$two
+		echo "RBC :$two"
+		sql="$sql;update examination set result='$two' where sample_id='$sample_id' and code='RBC'"
+
+	fi
+
+	if [ "$one" == "3" ] ; then
+		#echo $one\|$two
+		echo "HGB :$two"
+
+	fi
+
+	if [ "$one" == "4" ] ; then
+		#echo $one\|$two
+		echo "HCT :$two"
+
+	fi
+
+	if [ "$one" == "5" ] ; then
+		#echo $one\|$two
+		echo "MCV :$two"
+
+	fi
+
+	if [ "$one" == "6" ] ; then
+		#echo $one\|$two
+		echo "MCH :$two"
+
+	fi
+
+	if [ "$one" == "7" ] ; then
+		#echo $one\|$two
+		echo "MCHC :$two"
+
+	fi
+
+	if [ "$one" == "8" ] ; then
+		#echo $one\|$two
+		echo "RDW :$two"
+	fi
+
+	if [ "$one" == "@" ] ; then
+		#echo $one\|$two
+		echo "Platelet :$two"
+
+	fi
+
+	if [ "$one" == "A" ] ; then
+		#echo $one\|$two
+		echo "MPV :$two"
+
+	fi
+
+	if [ "$one" == "B" ] ; then
+		#echo $one\|$two
+		echo "THT :$two"
+	fi
+
+	if [ "$one" == "C" ] ; then
+		#echo $one\|$two
+		echo "PDW :$two"
+	fi
+
+	if [ "$one" == "#" ] ; then
+		#echo $one\|$two
+		echo "Lymphocyte% :$two"
+	fi
+
+	if [ "$one" == "%" ] ; then
+		#echo $one\|$two
+		echo "Monocyte% :$two"
+	fi
+
+	if [ "$one" == "'" ] ; then
+		#echo $one\|$two
+		echo "Granulocyte% :$two"
+	fi
+
+	if [ "$one" == "\"" ] ; then
+		#echo $one\|$two
+		echo "Lymphocyte count:$two"
+	fi
+
+	if [ "$one" == "\$" ] ; then
+		#echo $one\|$two
+		echo "Monocyte count:$two"
+	fi
+
+	if [ "$one" == "&" ] ; then
+		#echo $one\|$two
+		echo "Granulocyte count:$two"
+	fi
+
+	#for graphs
+	#if [ "$one" == "X" ] ; then
+		##echo $one\|$two
+		#echo "RDW Graph:"
+		#echo -e "$two"|/root/micros/gr
+	#fi
+
+	#if [ "$one" == "W" ] ; then
+		##echo $one\|$two
+		#echo "WBC width Graph:"
+		#echo -e "$two"|/root/micros/gr
+	#fi
+
+	#if [ "$one" == "Y" ] ; then
+		##echo $one\|$two
+		#echo "Platelet width Graph:"
+		#echo -e "$two"|/root/micros/gr
+	#fi
+##########################
+	if [ "$one" == `echo -e "\xfb"` ] ; then
+		#echo $one\|$two
+		echo "Analyser Name: $two"
+	fi
+	if [ "$one" == `echo -e "\xfe"` ] ; then
+		#echo $one\|$two
+		echo "Version number: $two"
+	fi
+	if [ "$one" == `echo -e "\xfd"` ] ; then
+		#echo $one\|$two
+		echo "Checksum is $two"
+	fi
+n=$((n+1))
+done<$f
+
+echo "$sql"
+mysql -uroot -pnishiiilu biochemistry -e "$sql"
+mysql -uroot -pnishiiilu biochemistry -e "select * from examination where sample_id='$sample_id'"
+mv $f /root/archive
